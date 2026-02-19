@@ -63,6 +63,7 @@
      XMLHttp.open("GET", "/class/csc3004/antroenker/cgi-bin/bibleajax.cgi?"
                   + "search_type=" + searchType.value
                   + "&book=" + document.getElementById('book').value
+				  + "&Bible=" + document.getElementById('bible').value
                   + "&chapter=" + document.getElementById('chapter').value
                   + "&verse=" + document.getElementById('verse').value
                   + "&num_verse=" + document.getElementById('num_verse').value,
@@ -173,6 +174,18 @@
   </select>
   </td>
   </tr>
+
+  <!--added bible options-->
+  <tr>
+  <td align=right valign=top>Bible Version</td>
+  <td align=left valign=top>
+  <select name="Bible" id=bible>
+  <option value="1">World English Bible
+  <option value="2">King James Version
+  <option value="3">Darby Translation
+  <option value="4">Young's Literal Translation
+  <option value="5">Webster Translation
+  <tr/>
 
   <tr>
   <td align=right valign=top>Chapter</td>

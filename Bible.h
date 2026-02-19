@@ -43,6 +43,9 @@ class Bible
       Bible();	// Default constructor
       Bible(const string s); // Constructor – pass name of bible file
    
+	  // Added multipule Bible types
+	  static string bibleVersion(int i);
+   
       // REQUIRED: Find and return a verse in this Bible, given a reference
       Verse lookup(const Ref ref, LookupResult& status);
    

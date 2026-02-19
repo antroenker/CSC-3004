@@ -53,6 +53,15 @@ int main()
    // retrieve the value for each appropriate field name
    form_iterator st = cgi.getElement("search_type");
    form_iterator book = cgi.getElement("book");
+   
+   // Added Bible Versions
+   form_iterator bibleVersion = cgi.getElement("Bible");
+   if (bibleVersion == cgi.getElements().end() || bibleVersion->isEmpty())
+   {
+	   cout << "<p>Error: Bible version not provided. <p>";
+	   return 0;
+   }
+   
    form_iterator chapter = cgi.getElement("chapter");
    form_iterator verse = cgi.getElement("verse");
    form_iterator nv = cgi.getElement("num_verse");
@@ -61,12 +70,13 @@ int main()
    bool validInput = false;
    
    // Extracts form-iterator values to integer values
+   int bibleVersionNumber = bibleVersion->getIntegerValue();
    int bookNum = book->getIntegerValue();
    string bookName = Ref::bookNames[bookNum];
    int chapterNum = chapter->getIntegerValue();
    int verseNum = verse->getIntegerValue();
    int numOfVerses = nv->getIntegerValue();
-   
+ 
    if (chapter != cgi.getElements().end())
    {
       int chapterNum = chapter->getIntegerValue();
@@ -78,8 +88,8 @@ int main()
       {
          cout << "<p>The chapter must be a positive number.</p>" << endl;
       }
+
 	  // added error handling
-	  
       else if (verseNum > 176)
 	  {
 		 cout << "<p>The verse number (" << verseNum << ") is too high.</p>" << endl;
@@ -88,24 +98,30 @@ int main()
 	  {
 		 cout << "<p>The verse must be a positive number.</p>" << endl;
 	  }
+	  else if (numOfVerses == 0 || numOfVerses < 0)
+	  {
+		  cout << "<p>Number of verses must be a positive number.<p>" << endl;
+	  }
 	  else
       {
          validInput = true;
       }
    }
-	
+
    // TODO: OTHER INPUT VALUE CHECKS ARE NEEDED ... but that's up to you!
 
    /* TODO: PUT CODE HERE TO CALL YOUR BIBLE CLASS FUNCTIONS
     *        TO LOOK UP THE REQUESTED VERSES
     */
-   
+
    // Ref object created from integer values
    Ref ref(bookNum, chapterNum, verseNum);
    Verse Verse;
    LookupResult status;
-   Bible bible;
-  
+   // For Bible versions
+   string fileName = Bible::bibleVersion(bibleVersionNumber);
+   Bible bible(fileName);
+
    /* SEND BACK THE RESULTS
     * Finally we send the result back to the client on the standard output stream
     * in HTML text format.
@@ -114,15 +130,17 @@ int main()
     */
    if (validInput)
    {
-	  
-      cout << "Search Type: <b>" << **st << "</b>" << endl;
-      cout << "<p>Your result: <br>";
-	       /*
-	       // changed **book to bookName
-           << bookName << " " << **chapter << ":" << **verse 
-           << "<em> The " << **nv
-           << " " << Verse.getVerse() << endl;
-		   */
+	    /*
+        cout << "Search Type: <b>" << **st << "</b>" << endl;
+        cout << "<p>Your result: <br>"; 
+	    // changed **book to bookName
+        << bookName << " " << **chapter << ":" << **verse 
+        << "<em> The " << **nv
+        << " " << Verse.getVerse() << endl;
+	    */
+		if (numOfVerses <= 0)
+			numOfVerses = 1;
+			
 		for(int i = 0; i < numOfVerses; i++){
    
 		// uses verse object to look up the reference
@@ -146,16 +164,29 @@ int main()
 			}
 			return 1;
 		}
-		
 		Verse.display();
 		cout << endl;
 		ref = bible.next(ref, status);
 		}
-   }
-   else
-   {
-      cout << "<p>Invalid Input: <em>report the more specific problem.</em></p>" << endl;
-   }
-
-   return 0;
+    }		
+    else if (status == NO_BOOK){
+	    cout << bible.error(status); 
+		cout << bookNum << endl;
+	}
+	else if (status == NO_CHAPTER){
+		cout << bible.error(status); 
+		cout << chapterNum
+		<< " in " << Ref::bookNames[bookNum] << endl;
+		}
+	else if (status == NO_VERSE){
+		cout << bible.error(status);
+		cout << (verseNum)
+		<< " in " << Ref::bookNames[bookNum]
+		<< " " << chapterNum << endl;	
+	}	
+    else 
+    {
+      cout << "<p>Re-visit one of your inputs!</em></p>" << endl;
+    }
+    return 0;
 }

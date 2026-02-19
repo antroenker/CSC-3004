@@ -29,6 +29,22 @@ Bible::Bible()
 // Constructor – pass bible filename
 Bible::Bible(const string s) { infile = s; }
 
+// Initializes a text file to string and passed to Bibles defualt constructor
+string Bible::bibleVersion(int i) // make sure to declare this into the header file
+{
+	if (i == 1)
+        return "/home/class/csc3004/Bibles/web-complete";
+    else if (i == 2)
+        return "/home/class/csc3004/Bibles/kjv-complete";
+    else if (i == 3)
+        return "/home/class/csc3004/Bibles/dby-complete";
+    else if (i == 4)
+        return "/home/class/csc3004/Bibles/ylt-complete";
+    else if (i == 5)
+        return "/home/class/csc3004/Bibles/webster-complete";
+	else return "Should never happen, but who knows lol";
+	
+}
 
 // REQUIRED: lookup finds a given verse in this Bible
 Verse Bible::lookup(Ref ref, LookupResult& status)
@@ -224,3 +240,4 @@ Ref Bible::prev(const Ref ref, LookupResult& status)
 {
    return ref;
 }
+
